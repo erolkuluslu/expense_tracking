@@ -31,3 +31,8 @@ The main dependencies used in this project include:
 - **intl**: For date and number formatting.
 
 A full list of dependencies can be found in the `pubspec.yaml` file.
+
+
+## Credits
+
+This code was sourced from the [HeyFlutter․com YouTube channel](https://www.youtube.com/@HeyFlutter), a great resource for Flutter tutorials and projects.
