@@ -35,4 +35,4 @@ A full list of dependencies can be found in the `pubspec.yaml` file.
 
 ## Credits
 
-This code was sourced from the [HeyFlutter․com YouTube channel](https://www.youtube.com/@HeyFlutter), a great resource for Flutter tutorials and projects.
+This code was sourced from  [HeyFlutter․com YouTube channel](https://www.youtube.com/@HeyFlutter) and contributed by me with adding new functionalities.
