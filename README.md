@@ -1,6 +1,3 @@
- Here’s an updated README that includes a section on how you used `SharedPreferences` in the app:
-
----
 
 # Flutter Expense Tracker - BLoC State Management
 
