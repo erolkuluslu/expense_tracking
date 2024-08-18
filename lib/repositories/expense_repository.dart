@@ -1,12 +1,12 @@
-import 'package:expense_tracking/data/local_data_storage.dart';
-import 'package:expense_tracking/models/expense.dart';
+import 'package:expense_tracking/data/idata_storage.dart';
+
+import '../models/expense.dart';
 
 class ExpenseRepository {
-  final LocalDataStorage _storage;
+  final ExpenseStorage _storage;
 
-  const ExpenseRepository({
-    required LocalDataStorage storage,
-  }) : _storage = storage;
+  const ExpenseRepository({required ExpenseStorage storage})
+      : _storage = storage;
 
   Future<void> createExpense(Expense expense) => _storage.saveExpense(expense);
 

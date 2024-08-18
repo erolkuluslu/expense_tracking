@@ -1,7 +1,6 @@
 import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'expense_tile_widget.dart';
 import 'loading_widget.dart';
 

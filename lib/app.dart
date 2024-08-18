@@ -3,7 +3,7 @@ import 'package:expense_tracking/repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'pages/home_page.dart';
+import 'pages/home/home_page.dart';
 import 'theme/theme.dart';
 
 class App extends StatelessWidget {
