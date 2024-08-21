@@ -14,9 +14,18 @@ sealed class CurrencyUpdateState extends Equatable {
 }
 
 final class CurrencyUpdateInitial extends CurrencyUpdateState {
-  const CurrencyUpdateInitial(
-      {required String currency, double conversionRate = 1.0})
-      : super(currency: currency, conversionRate: conversionRate);
+  const CurrencyUpdateInitial({
+    required String currency,
+    double conversionRate = 1.0,
+  }) : super(currency: currency, conversionRate: conversionRate);
+}
+
+// New state for loading the conversion rates
+final class CurrencyUpdateLoading extends CurrencyUpdateState {
+  const CurrencyUpdateLoading({
+    required String currency,
+    double conversionRate = 1.0,
+  }) : super(currency: currency, conversionRate: conversionRate);
 }
 
 final class CurrencyUpdated extends CurrencyUpdateState {

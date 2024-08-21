@@ -9,6 +9,7 @@ final class DioServiceManager<T> extends IserviceManager<T> {
   DioServiceManager() {
     _dio = Dio();
   }
+
   @override
   Future<BaseResponseModel<T>> get(String url) async {
     try {

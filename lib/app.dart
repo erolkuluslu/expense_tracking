@@ -1,5 +1,7 @@
 import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
 import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/network_services/dio_service_manager.dart';
+import 'package:expense_tracking/network_services/iservice_manager.dart';
 import 'package:expense_tracking/repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +16,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final IserviceManager serviceManager = DioServiceManager();
+
     return RepositoryProvider.value(
       value: expenseRepository,
       child: MultiBlocProvider(
@@ -24,8 +28,10 @@ class App extends StatelessWidget {
             )..add(const ExpenseListSubscriptionRequested()),
           ),
           BlocProvider<CurrencyUpdateBloc>(
-            create: (context) =>
-                CurrencyUpdateBloc(repository: expenseRepository),
+            create: (context) => CurrencyUpdateBloc(
+              repository: expenseRepository,
+              serviceManager: serviceManager, // Use the interface type
+            ),
           ),
         ],
         child: MaterialApp(
