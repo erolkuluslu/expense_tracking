@@ -10,6 +10,8 @@ class SharedPrefStorage implements ExpenseStorage {
   //A constant key used to store and retrieve the expenses list from SharedPreferences.
   final _controller = BehaviorSubject<List<Expense?>>.seeded(const []);
   //BehaviorSubject from rxdart that stores the current list of expenses and allows other parts of the app to listen for changes.
+  static const currencyPreferenceKey =
+      'currency_preference_key'; // New key for currency preference
 
   SharedPrefStorage({
     required SharedPreferences preferences,
@@ -31,6 +33,17 @@ class SharedPrefStorage implements ExpenseStorage {
       _controller.add(const []);
       //If there's no data, an empty list is added to _controller.
     }
+  }
+
+  // New method to get the saved currency preference
+  @override
+  String getCurrencyPreference() {
+    return _preferences.getString(currencyPreferenceKey) ?? 'USD';
+  }
+
+  // New method to save the currency preference
+  Future<void> saveCurrencyPreference(String currency) async {
+    await _preferences.setString(currencyPreferenceKey, currency);
   }
 
   Stream<List<Expense?>> getExpenses() => _controller.asBroadcastStream();

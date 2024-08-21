@@ -1,3 +1,4 @@
+import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
 import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
 import 'package:expense_tracking/repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,18 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: expenseRepository,
-      child: BlocProvider(
-        create: (context) => ExpenseListBloc(
-          repository: expenseRepository,
-        )..add(const ExpenseListSubscriptionRequested()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<ExpenseListBloc>(
+            create: (context) => ExpenseListBloc(
+              repository: expenseRepository,
+            )..add(const ExpenseListSubscriptionRequested()),
+          ),
+          BlocProvider<CurrencyUpdateBloc>(
+            create: (context) =>
+                CurrencyUpdateBloc(repository: expenseRepository),
+          ),
+        ],
         child: MaterialApp(
           home: const HomePage(),
           theme: AppTheme.theme,

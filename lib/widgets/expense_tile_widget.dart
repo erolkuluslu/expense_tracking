@@ -1,4 +1,5 @@
 import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
 import 'package:expense_tracking/extensions/extensions.dart';
 import 'package:expense_tracking/models/expense.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,19 @@ class ExpenseTileWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    final formattedDate = DateFormat('dd/MM/yyyy').format(expense.date);
+    final currencyState = context.watch<CurrencyUpdateBloc>().state;
 
-    final currency = NumberFormat.currency(symbol: '\$', decimalDigits: 0);
-    final price = currency.format(expense.amount);
+    // Convert the expense amount based on the current currency's conversion rate
+    final convertedAmount = expense.amount * currencyState.conversionRate;
+
+    // Format the price with the correct currency symbol
+    final currencyFormatter = NumberFormat.currency(
+      symbol: _getCurrencySymbol(currencyState.currency),
+      decimalDigits: 0,
+    );
+    final price = currencyFormatter.format(convertedAmount);
+
+    final formattedDate = DateFormat('dd/MM/yyyy').format(expense.date);
 
     return Dismissible(
       key: ValueKey(expense.id),
@@ -47,5 +57,17 @@ class ExpenseTileWidget extends StatelessWidget {
         trailing: Text('-$price', style: textTheme.titleLarge),
       ),
     );
+  }
+
+  String _getCurrencySymbol(String currency) {
+    switch (currency) {
+      case 'EUR':
+        return '€';
+      case 'TRY':
+        return '₺';
+      case 'USD':
+      default:
+        return '\$';
+    }
   }
 }

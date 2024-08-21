@@ -32,4 +32,16 @@ class SQLiteExpenseStorage implements ExpenseStorage {
       return Expense.fromJson(maps[i]);
     });
   }
+
+  @override
+  Future<void> saveCurrencyPreference(String currency) {
+    // TODO: implement saveCurrencyPreference
+    throw UnimplementedError();
+  }
+
+  @override
+  String getCurrencyPreference() {
+    // TODO: implement getCurrencyPreference
+    throw UnimplementedError();
+  }
 }

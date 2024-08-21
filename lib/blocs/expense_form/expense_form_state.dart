@@ -9,28 +9,31 @@ extension ExpenseFormStatusX on ExpenseFormStatus {
       ].contains(this);
 }
 
-final class ExpenseFormState extends Equatable {
+class ExpenseFormState extends Equatable {
+  final String? title;
+  final double? amount;
+  final DateTime date;
+  final Category category;
+  final String currency; // New currency field
+  final ExpenseFormStatus status;
+  final Expense? initialExpense;
+
   const ExpenseFormState({
     this.title,
     this.amount,
     required this.date,
     this.category = Category.other,
+    this.currency = 'USD', // Default currency
     this.status = ExpenseFormStatus.initial,
     this.initialExpense,
   });
-
-  final String? title;
-  final double? amount;
-  final DateTime date;
-  final Category category;
-  final ExpenseFormStatus status;
-  final Expense? initialExpense;
 
   ExpenseFormState copyWith({
     String? title,
     double? amount,
     DateTime? date,
     Category? category,
+    String? currency, // Support copying with a new currency
     ExpenseFormStatus? status,
     Expense? initialExpense,
   }) {
@@ -39,6 +42,7 @@ final class ExpenseFormState extends Equatable {
       amount: amount ?? this.amount,
       date: date ?? this.date,
       category: category ?? this.category,
+      currency: currency ?? this.currency, // Apply new currency
       status: status ?? this.status,
       initialExpense: initialExpense ?? this.initialExpense,
     );
@@ -50,6 +54,7 @@ final class ExpenseFormState extends Equatable {
         amount,
         date,
         category,
+        currency, // Include currency in equality checks
         status,
         initialExpense,
       ];

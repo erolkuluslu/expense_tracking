@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:equatable/equatable.dart';
 
 import 'category.dart';
@@ -10,6 +8,7 @@ class Expense extends Equatable {
   final double amount;
   final DateTime date;
   final Category category;
+  final String currency; // Add a currency field
 
   const Expense({
     required this.id,
@@ -17,6 +16,7 @@ class Expense extends Equatable {
     required this.amount,
     required this.date,
     required this.category,
+    this.currency = 'USD', // Default to USD if not specified
   });
 
   @override
@@ -26,6 +26,7 @@ class Expense extends Equatable {
         amount,
         date,
         category,
+        currency, // Include currency in equality checks
       ];
 
   factory Expense.fromJson(Map<String, dynamic> json) {
@@ -35,6 +36,7 @@ class Expense extends Equatable {
       amount: double.tryParse(json['amount']) ?? 0.0,
       date: DateTime.fromMillisecondsSinceEpoch(json['date']),
       category: Category.fromJson(json['category']),
+      currency: json['currency'] ?? 'USD', // Handle currency field in JSON
     );
   }
 
@@ -45,6 +47,7 @@ class Expense extends Equatable {
       'amount': amount.toString(),
       'date': date.millisecondsSinceEpoch,
       'category': category.toJson(),
+      'currency': currency, // Include currency in serialization
     };
   }
 
@@ -53,6 +56,7 @@ class Expense extends Equatable {
     double? amount,
     DateTime? date,
     Category? category,
+    String? currency, // Support currency changes
   }) {
     return Expense(
       id: id,
@@ -60,6 +64,7 @@ class Expense extends Equatable {
       amount: amount ?? this.amount,
       date: date ?? this.date,
       category: category ?? this.category,
+      currency: currency ?? this.currency, // Apply currency changes
     );
   }
 

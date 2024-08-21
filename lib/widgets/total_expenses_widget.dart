@@ -1,4 +1,5 @@
 import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
 import 'package:expense_tracking/utils/format_total_expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,9 +13,16 @@ class TotalExpensesWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    final state = context.watch<ExpenseListBloc>().state;
+    final expenseState = context.watch<ExpenseListBloc>().state;
+    final currencyState = context.watch<CurrencyUpdateBloc>().state;
 
-    final totalExpenses = formatTotalExpenses(state.totalExpenses);
+    // Recalculate total expenses based on the selected currency's conversion rate
+    final convertedExpenses =
+        expenseState.totalExpenses * currencyState.conversionRate;
+
+    // Format the total expenses with the correct currency symbol
+    final totalExpenses =
+        formatTotalExpenses(convertedExpenses, currencyState.currency);
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -24,7 +32,7 @@ class TotalExpensesWidget extends StatelessWidget {
           Text(
             'Total Expenses',
             style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onBackground.withOpacity(0.4),
+              color: colorScheme.onSurface.withOpacity(0.4),
             ),
           ),
           Text(totalExpenses, style: textTheme.displaySmall),

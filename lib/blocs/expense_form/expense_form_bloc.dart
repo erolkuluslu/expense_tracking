@@ -20,6 +20,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
           amount: initialExpense?.amount,
           date: initialExpense?.date ?? DateTime.now(),
           category: initialExpense?.category ?? Category.other,
+          currency: initialExpense?.currency ?? 'USD', // Initialize currency
         )) {
     on<ExpenseTitleChanged>(_onTitleChanged);
     on<ExpenseAmountChanged>(_onAmountChanged);
@@ -68,6 +69,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
           amount: state.amount,
           date: state.date,
           category: state.category,
+          currency: state.currency, // Ensure currency is copied
         ) ??
         Expense(
           id: const Uuid().v4(),
@@ -75,6 +77,7 @@ class ExpenseFormBloc extends Bloc<ExpenseFormEvent, ExpenseFormState> {
           amount: state.amount!,
           date: state.date,
           category: state.category,
+          currency: state.currency, // Ensure new expenses have currency
         );
 
     emit(state.copyWith(status: ExpenseFormStatus.loading));
