@@ -1,3 +1,4 @@
+import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
 import 'package:expense_tracking/blocs/expense_form/expense_form_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -111,17 +112,33 @@ class AmountFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<ExpenseFormBloc>().state;
+    final currencyState = context.watch<CurrencyUpdateBloc>().state;
+
+    // Get the correct currency symbol
+    final currencySymbol = _getCurrencySymbol(currencyState.currency);
 
     return TextFormFieldWidget(
       label: 'Amount',
       hint: '0.00',
-      prefixText: '\$',
+      prefixText: currencySymbol, // Use the dynamically updated currency symbol
       enabled: !state.status.isLoading,
       initialValue: state.initialExpense?.amount.toString(),
       onChanged: (value) {
         context.read<ExpenseFormBloc>().add(ExpenseAmountChanged(value));
       },
     );
+  }
+
+  String _getCurrencySymbol(String currency) {
+    switch (currency) {
+      case 'EUR':
+        return '€';
+      case 'TRY':
+        return '₺';
+      case 'USD':
+      default:
+        return '\$';
+    }
   }
 }
 

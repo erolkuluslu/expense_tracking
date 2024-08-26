@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:expense_tracking/network_services/base_response_model.dart';
 import 'package:expense_tracking/network_services/iservice_manager.dart';
 import 'package:expense_tracking/repositories/expense_repository.dart';
 
@@ -40,38 +39,29 @@ class CurrencyUpdateBloc
 
   void _onFetchConversionRate(
       FetchConversionRateEvent event, Emitter<CurrencyUpdateState> emit) async {
-    emit(CurrencyUpdateLoading(currency: event.baseCurrency));
-
-    // Fetch the conversion rate
+    // No need to emit loading state here if it's only an initial fetch
     await _fetchAndEmitConversionRate(event.baseCurrency, emit);
   }
 
   Future<void> _fetchAndEmitConversionRate(
-      String currency, Emitter<CurrencyUpdateState> emit) async {
-    final response = await _serviceManager
-        .get('https://api.exchangerate-api.com/v4/latest/USD');
+      String targetCurrency, Emitter<CurrencyUpdateState> emit) async {
+    final response = await _serviceManager.get(
+        'https://api.exchangerate-api.com/v4/latest/USD'); // Assuming base currency is USD
 
     if (response.error != null) {
-      print('API Error: ${response.error}');
       emit(CurrencyUpdateError(
           errorMessage: 'Failed to fetch conversion rates',
-          currency: currency));
+          currency: targetCurrency));
       return;
     }
 
-    // Log the entire API response for debugging
-    print('API Response: ${response.data}');
-
-    // Assuming the API returns a map with rates like { "USD": 1.0, "EUR": 0.85, "TRY": 8.0 }
     final rates = response.data['rates'];
-    final conversionRate = rates[currency] ?? 1.0;
+    final conversionRate = rates[targetCurrency] ?? 1.0;
 
-    print('Conversion Rate for $currency: $conversionRate');
-
-    await _repository.saveCurrencyPreference(currency);
+    await _repository.saveCurrencyPreference(targetCurrency);
 
     emit(CurrencyUpdated(
-      currency: currency,
+      currency: targetCurrency,
       conversionRate: conversionRate,
     ));
   }

@@ -1,12 +1,12 @@
-import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
-import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
-import 'package:expense_tracking/network_services/dio_service_manager.dart';
-import 'package:expense_tracking/network_services/iservice_manager.dart';
-import 'package:expense_tracking/repositories/expense_repository.dart';
+import 'blocs/currency_update/currency_update_bloc.dart';
+import 'blocs/expense_list/expense_list_bloc.dart';
+import 'network_services/dio_service_manager.dart';
+import 'network_services/iservice_manager.dart';
+import 'pages/login_screen/login_screen.dart';
+import 'repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'pages/home/home_page.dart';
 import 'theme/theme.dart';
 
 class App extends StatelessWidget {
@@ -35,7 +35,7 @@ class App extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          home: const HomePage(),
+          home: const LoginScreen(),
           theme: AppTheme.theme,
           debugShowCheckedModeBanner: false,
         ),

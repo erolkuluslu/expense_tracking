@@ -1,6 +1,6 @@
-import 'package:expense_tracking/data/idata_storage.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/expense.dart';
+/*
 
 class SQLiteExpenseStorage implements ExpenseStorage {
   final Database _database;
@@ -45,3 +45,9 @@ class SQLiteExpenseStorage implements ExpenseStorage {
     throw UnimplementedError();
   }
 }
+
+class Database {
+}
+
+
+*/

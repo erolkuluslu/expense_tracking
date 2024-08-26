@@ -1,5 +1,5 @@
-import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
 import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
+import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
 import 'package:expense_tracking/extensions/extensions.dart';
 import 'package:expense_tracking/models/expense.dart';
 import 'package:flutter/material.dart';
