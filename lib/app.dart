@@ -1,3 +1,5 @@
+import 'package:expense_tracking/blocs/auth/auth_bloc.dart';
+
 import 'blocs/currency_update/currency_update_bloc.dart';
 import 'blocs/expense_list/expense_list_bloc.dart';
 import 'network_services/dio_service_manager.dart';
@@ -33,9 +35,12 @@ class App extends StatelessWidget {
               serviceManager: serviceManager, // Use the interface type
             ),
           ),
+          BlocProvider<AuthBloc>(
+            create: (context) => AuthBloc(),
+          )
         ],
         child: MaterialApp(
-          home: const LoginScreen(),
+          home: LoginScreen(expenseRepository: expenseRepository),
           theme: AppTheme.theme,
           debugShowCheckedModeBanner: false,
         ),

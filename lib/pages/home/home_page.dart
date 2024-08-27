@@ -1,3 +1,4 @@
+import 'package:expense_tracking/blocs/auth/auth_bloc.dart';
 import 'package:expense_tracking/blocs/currency_update/currency_update_bloc.dart';
 import 'package:expense_tracking/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state as AuthSuccess;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hello, XXX'),
+        title: Text('Hello, ${authState.email}!'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
