@@ -8,7 +8,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     void onChange(Change<AuthState> change) {
       super.onChange(change);
-      print('AuthBloc: $change');
+      print('AuthBloc- Change: $change');
+    }
+
+    void onTransition(Transition<AuthEvent, AuthState> transition) {
+      super.onTransition(transition);
+      print('AuthBloc - Transition: $transition');
     }
 
     on<AuthLoginRequested>((event, emit) async {
