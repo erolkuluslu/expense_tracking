@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../models/category.dart';
-import 'loading_widget.dart';
-import 'text_form_field_widget.dart';
+import '../../../models/category.dart';
+import '../../../global_widgets/loading_widget.dart';
+import '../../../global_widgets/text_form_field_widget.dart';
 
 class AddExpenseSheetWidget extends StatelessWidget {
   const AddExpenseSheetWidget({super.key});

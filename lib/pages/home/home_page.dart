@@ -4,9 +4,9 @@ import 'package:expense_tracking/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/expense_filter_widget.dart';
-import '../../widgets/expenses_widget.dart';
-import '../../widgets/total_expenses_widget.dart';
+import 'widgets/expense_filter_widget.dart';
+import 'widgets/expenses_widget.dart';
+import 'widgets/total_expenses_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

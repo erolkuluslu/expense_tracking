@@ -2,7 +2,7 @@ import 'package:expense_tracking/blocs/expense_list/expense_list_bloc.dart';
 import '/utils/format_total_expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/currency_update/currency_update_bloc.dart';
+import '../../../blocs/currency_update/currency_update_bloc.dart';
 
 class TotalExpensesWidget extends StatelessWidget {
   const TotalExpensesWidget({super.key});

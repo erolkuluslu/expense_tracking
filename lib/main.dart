@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:expense_tracking/widgets/app_bloc_observer.dart';
+import 'package:expense_tracking/global_widgets/app_bloc_observer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'data/shared_pref_storage.dart';
 import 'repositories/expense_repository.dart';

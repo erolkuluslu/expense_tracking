@@ -1,4 +1,3 @@
-import 'package:expense_tracking/app.dart';
 import 'package:expense_tracking/blocs/auth/auth_bloc.dart';
 import 'package:expense_tracking/pages/home/home_page.dart';
 import 'package:expense_tracking/pages/login_screen/widgets/gradient_button.dart';
