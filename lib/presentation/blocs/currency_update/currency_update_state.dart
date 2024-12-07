@@ -1,49 +1,53 @@
 part of 'currency_update_bloc.dart';
 
-sealed class CurrencyUpdateState extends Equatable {
+/// Base state for currency updates
+abstract class CurrencyUpdateState extends Equatable {
   final String currency;
-  final double conversionRate;
-
+  
   const CurrencyUpdateState({
     required this.currency,
-    this.conversionRate = 1.0,
   });
 
   @override
-  List<Object> get props => [currency, conversionRate];
+  List<Object?> get props => [currency];
 }
 
-final class CurrencyUpdateInitial extends CurrencyUpdateState {
-  const CurrencyUpdateInitial({
-    required String currency,
-    double conversionRate = 1.0,
-  }) : super(currency: currency, conversionRate: conversionRate);
+/// Initial state when the bloc is created
+class CurrencyUpdateInitial extends CurrencyUpdateState {
+  const CurrencyUpdateInitial({required String currency})
+      : super(currency: currency);
 }
 
-// New state for loading the conversion rates
-final class CurrencyUpdateLoading extends CurrencyUpdateState {
-  const CurrencyUpdateLoading({
-    required String currency,
-    double conversionRate = 1.0,
-  }) : super(currency: currency, conversionRate: conversionRate);
+/// Loading state while fetching conversion rates
+class CurrencyUpdateLoading extends CurrencyUpdateState {
+  const CurrencyUpdateLoading({required String currency})
+      : super(currency: currency);
 }
 
-final class CurrencyUpdated extends CurrencyUpdateState {
-  const CurrencyUpdated({
-    required String currency,
-    required double conversionRate,
-  }) : super(currency: currency, conversionRate: conversionRate);
-}
-
-final class CurrencyUpdateError extends CurrencyUpdateState {
+/// Error state when conversion rate fetch fails
+class CurrencyUpdateError extends CurrencyUpdateState {
   final String errorMessage;
 
   const CurrencyUpdateError({
     required this.errorMessage,
-    String currency = 'Unknown',
-    double conversionRate = 1.0,
-  }) : super(currency: currency, conversionRate: conversionRate);
+    required String currency,
+  }) : super(currency: currency);
 
   @override
-  List<Object> get props => [currency, conversionRate, errorMessage];
+  List<Object?> get props => [currency, errorMessage];
+}
+
+/// Success state with updated conversion rate
+class CurrencyUpdated extends CurrencyUpdateState {
+  final double conversionRate;
+  final String previousCurrency;
+
+  const CurrencyUpdated({
+    required String currency,
+    required this.conversionRate,
+    required this.previousCurrency,
+  }) : super(currency: currency);
+
+  @override
+  List<Object?> get props => [currency, conversionRate, previousCurrency];
 }

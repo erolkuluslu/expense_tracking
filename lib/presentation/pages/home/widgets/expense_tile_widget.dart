@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../data/models/expense.dart';
+import '../../../../data/models/category.dart';
 import '../../../blocs/currency_update/currency_update_bloc.dart';
 import '../../../blocs/expense_list/expense_list_bloc.dart';
 
@@ -11,64 +12,105 @@ class ExpenseTileWidget extends StatelessWidget {
   const ExpenseTileWidget({super.key, required this.expense});
   final Expense expense;
 
+  String _formatAmount(double amount, CurrencyUpdateState currencyState) {
+    if (currencyState is! CurrencyUpdated) {
+      return NumberFormat.currency(
+        symbol: _getCurrencySymbol(expense.currency),
+        decimalDigits: 2,
+      ).format(amount);
+    }
+
+    double convertedAmount = amount;
+    if (expense.currency != currencyState.currency) {
+      if (expense.currency == currencyState.previousCurrency) {
+        convertedAmount = amount * currencyState.conversionRate;
+      } else {
+        convertedAmount = amount * currencyState.conversionRate;
+      }
+    }
+
+    return NumberFormat.currency(
+      symbol: _getCurrencySymbol(currencyState.currency),
+      decimalDigits: 2,
+    ).format(convertedAmount);
+  }
+
+  String _getCurrencySymbol(String currencyCode) {
+    switch (currencyCode.toUpperCase()) {
+      case 'USD':
+        return '\$';
+      case 'EUR':
+        return '€';
+      case 'TRY':
+        return '₺';
+      case 'GBP':
+        return '£';
+      default:
+        return currencyCode;
+    }
+  }
+
+  IconData _getCategoryIcon(Category category) {
+    switch (category) {
+      case Category.all:
+        return Icons.list;
+      case Category.entertainment:
+        return Icons.movie;
+      case Category.food:
+        return Icons.restaurant;
+      case Category.grocery:
+        return Icons.shopping_cart;
+      case Category.work:
+        return Icons.work;
+      case Category.traveling:
+        return Icons.flight;
+      case Category.other:
+        return Icons.more_horiz;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    final currencyState = context.watch<CurrencyUpdateBloc>().state;
+    return BlocBuilder<CurrencyUpdateBloc, CurrencyUpdateState>(
+      builder: (context, currencyState) {
+        final formattedAmount = _formatAmount(expense.amount, currencyState);
+        final formattedDate = DateFormat('dd/MM/yyyy').format(expense.date);
 
-    // Convert the expense amount based on the current currency's conversion rate
-    final convertedAmount = expense.amount * currencyState.conversionRate;
-
-    // Format the price with the correct currency symbol
-    final currencyFormatter = NumberFormat.currency(
-      symbol: _getCurrencySymbol(currencyState.currency),
-      decimalDigits: 0,
-    );
-    final price = currencyFormatter.format(convertedAmount);
-
-    final formattedDate = DateFormat('dd/MM/yyyy').format(expense.date);
-
-    return Dismissible(
-      key: ValueKey(expense.id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.all(16),
-        color: colorScheme.error,
-        child: Icon(Icons.delete, color: colorScheme.onError),
-      ),
-      onDismissed: (direction) {
-        context
-            .read<ExpenseListBloc>()
-            .add(ExpenseListExpenseDeleted(expense: expense));
-      },
-      child: ListTile(
-        onTap: () => context.showAddExpenseSheet(expense: expense),
-        leading: Icon(Icons.car_repair, color: colorScheme.surfaceTint),
-        title: Text(expense.title, style: textTheme.titleMedium),
-        subtitle: Text(
-          formattedDate,
-          style: textTheme.bodySmall?.copyWith(
-            color: colorScheme.onBackground.withOpacity(0.5),
+        return Dismissible(
+          key: ValueKey(expense.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.all(16),
+            color: colorScheme.error,
+            child: Icon(Icons.delete, color: colorScheme.onError),
           ),
-        ),
-        trailing: Text('-$price', style: textTheme.titleLarge),
-      ),
+          onDismissed: (direction) {
+            context
+                .read<ExpenseListBloc>()
+                .add(ExpenseListExpenseDeleted(expense: expense));
+          },
+          child: ListTile(
+            onTap: () => context.showAddExpenseSheet(expense: expense),
+            leading: Icon(
+              _getCategoryIcon(expense.category),
+              color: colorScheme.surfaceTint,
+            ),
+            title: Text(expense.title, style: textTheme.titleMedium),
+            subtitle: Text(formattedDate),
+            trailing: Text(
+              formattedAmount,
+              style: textTheme.titleMedium?.copyWith(
+                color: colorScheme.primary,
+              ),
+            ),
+          ),
+        );
+      },
     );
-  }
-
-  String _getCurrencySymbol(String currency) {
-    switch (currency) {
-      case 'EUR':
-        return '€';
-      case 'TRY':
-        return '₺';
-      case 'USD':
-      default:
-        return '\$';
-    }
   }
 }

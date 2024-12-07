@@ -1,4 +1,5 @@
 import 'package:expense_tracking/data/models/expense.dart';
+import 'package:flutter/material.dart';
 
 enum Category {
   all,
@@ -22,6 +23,16 @@ extension CategoryX on Category {
         Category.work => 'Work',
         Category.traveling => 'Traveling',
         Category.other => 'Other',
+      };
+
+  IconData get icon => switch (this) {
+        Category.all => Icons.list,
+        Category.entertainment => Icons.movie,
+        Category.food => Icons.restaurant,
+        Category.grocery => Icons.shopping_cart,
+        Category.work => Icons.work,
+        Category.traveling => Icons.flight,
+        Category.other => Icons.more_horiz,
       };
 
   bool apply(Expense? expense) => switch (this) {

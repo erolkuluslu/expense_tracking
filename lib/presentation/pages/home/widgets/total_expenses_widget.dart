@@ -3,9 +3,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/format_total_expenses.dart';
 import '../../../blocs/currency_update/currency_update_bloc.dart';
 import '../../../blocs/expense_list/expense_list_bloc.dart';
+import '../../../../data/models/expense.dart';
 
 class TotalExpensesWidget extends StatelessWidget {
   const TotalExpensesWidget({super.key});
+
+  double _calculateTotalExpenses(List<Expense?> expenses, CurrencyUpdateState currencyState) {
+    double total = 0;
+    for (final expense in expenses) {
+      if (expense == null) continue;
+      
+      if (currencyState is CurrencyUpdated) {
+        if (expense.currency == currencyState.currency) {
+          total += expense.amount;
+        } else if (expense.currency == currencyState.previousCurrency) {
+          total += expense.amount * currencyState.conversionRate;
+        } else {
+          // For other currencies, use the base conversion rate
+          total += expense.amount * currencyState.conversionRate;
+        }
+      } else {
+        total += expense.amount; // Fallback to original amount if no conversion available
+      }
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,31 +35,38 @@ class TotalExpensesWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    final expenseState = context.watch<ExpenseListBloc>().state;
-    final currencyState = context.watch<CurrencyUpdateBloc>().state;
+    return BlocBuilder<ExpenseListBloc, ExpenseListState>(
+      builder: (context, expenseState) {
+        return BlocBuilder<CurrencyUpdateBloc, CurrencyUpdateState>(
+          builder: (context, currencyState) {
+            final totalExpenses = _calculateTotalExpenses(
+              expenseState.expenses,
+              currencyState,
+            );
 
-    // Recalculate total expenses based on the selected currency's conversion rate
-    final convertedExpenses =
-        expenseState.totalExpenses * currencyState.conversionRate;
+            final formattedTotal = formatTotalExpenses(
+              totalExpenses,
+              currencyState.currency,
+            );
 
-    // Format the total expenses with the correct currency symbol
-    final totalExpenses =
-        formatTotalExpenses(convertedExpenses, currencyState.currency);
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Total Expenses',
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.4),
-            ),
-          ),
-          Text(totalExpenses, style: textTheme.displaySmall),
-        ],
-      ),
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Total Expenses',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.4),
+                    ),
+                  ),
+                  Text(formattedTotal, style: textTheme.displaySmall),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
