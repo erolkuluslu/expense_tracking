@@ -7,15 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPrefStorage implements ExpenseStorage {
   final SharedPreferences _preferences;
   static const expensesCollectionKey = 'expenses_collection_key';
-  //A constant key used to store and retrieve the expenses list from SharedPreferences.
+  static const currencyPreferenceKey = 'currency_preference_key';
   final _controller = BehaviorSubject<List<Expense?>>.seeded(const []);
-  //BehaviorSubject from rxdart that stores the current list of expenses and allows other parts of the app to listen for changes.
-  static const currencyPreferenceKey =
-      'currency_preference_key'; // New key for currency preference
 
-  SharedPrefStorage({
-    required SharedPreferences preferences,
-  }) : _preferences = preferences {
+  SharedPrefStorage({required SharedPreferences preferences})
+      : _preferences = preferences {
     _initialize();
   }
 
@@ -23,38 +19,35 @@ class SharedPrefStorage implements ExpenseStorage {
     final expensesJson = _preferences.getString(expensesCollectionKey);
 
     if (expensesJson != null) {
-      //If the string exists, it's decoded into a list of Expense objects.
-      final expenseList = List<dynamic>.from(jsonDecode(expensesJson) as List);
+      final expenseList = (jsonDecode(expensesJson) as List)
+          .whereType<Map<String, dynamic>>()
+          .toList();
       final expenses =
           expenseList.map((expense) => Expense.fromJson(expense)).toList();
       _controller.add(expenses);
-      //The decoded list is then added to _controller, making it available to any listeners.
     } else {
       _controller.add(const []);
-      //If there's no data, an empty list is added to _controller.
     }
   }
 
-  // New method to get the saved currency preference
   @override
   String getCurrencyPreference() {
     return _preferences.getString(currencyPreferenceKey) ?? 'USD';
   }
 
-  // New method to save the currency preference
+  @override
   Future<void> saveCurrencyPreference(String currency) async {
     await _preferences.setString(currencyPreferenceKey, currency);
   }
 
-  Stream<List<Expense?>> getExpenses() => _controller.asBroadcastStream();
-//Converts the BehaviorSubject into a broadcast stream so multiple listeners can subscribe to updates.
+  @override
+  Stream<List<Expense?>> getExpenses() => _controller.stream;
 
   @override
   Future<void> saveExpense(Expense expense) async {
     final expenses = [..._controller.value];
-    final expenseIndex = expenses.indexWhere(
-      (currentExpense) => currentExpense?.id == expense.id,
-    );
+    final expenseIndex = expenses
+        .indexWhere((currentExpense) => currentExpense?.id == expense.id);
 
     if (expenseIndex >= 0) {
       expenses[expenseIndex] = expense;
@@ -63,8 +56,8 @@ class SharedPrefStorage implements ExpenseStorage {
     }
 
     _controller.add(expenses);
-    await _preferences.setString(expensesCollectionKey, jsonEncode(expenses));
-    return;
+    final jsonList = expenses.map((e) => e?.toJson()).toList();
+    await _preferences.setString(expensesCollectionKey, jsonEncode(jsonList));
   }
 
   @override
@@ -78,8 +71,8 @@ class SharedPrefStorage implements ExpenseStorage {
     } else {
       expenses.removeAt(expenseIndex);
       _controller.add(expenses);
-      _preferences.setString(expensesCollectionKey, jsonEncode(expenses));
-      return;
+      final jsonList = expenses.map((e) => e?.toJson()).toList();
+      await _preferences.setString(expensesCollectionKey, jsonEncode(jsonList));
     }
   }
 }
