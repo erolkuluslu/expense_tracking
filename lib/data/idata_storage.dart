@@ -1,4 +1,4 @@
-import 'package:expense_tracking/models/expense.dart';
+import 'package:expense_tracking/data/models/expense.dart';
 
 abstract class ExpenseStorage {
   Future<void> saveExpense(Expense expense);

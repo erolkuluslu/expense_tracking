@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:expense_tracking/data/idata_storage.dart';
+import 'package:expense_tracking/data/models/expense.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/expense.dart';
 
 class SharedPrefStorage implements ExpenseStorage {
   final SharedPreferences _preferences;

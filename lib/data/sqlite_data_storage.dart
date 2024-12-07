@@ -1,5 +1,4 @@
 import 'package:sqflite/sqflite.dart';
-import '../models/expense.dart';
 /*
 
 class SQLiteExpenseStorage implements ExpenseStorage {
