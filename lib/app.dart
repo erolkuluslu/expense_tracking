@@ -1,17 +1,16 @@
+import 'package:expense_tracking/data/repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: directives_ordering
+import 'package:expense_tracking/core/di/service_locator.dart';
+import 'package:expense_tracking/data/repositories/currency_repository.dart';
+import 'package:expense_tracking/presentation/blocs/auth/auth_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/currency_update/currency_update_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/presentation/pages/login_screen/login_screen.dart';
 
-import 'core/di/service_locator.dart';
 import 'core/theme/theme.dart';
-import 'data/repositories/currency_repository.dart';
-import 'data/repositories/expense_repository.dart';
-import 'presentation/blocs/auth/auth_bloc.dart';
-import 'presentation/blocs/currency_update/currency_update_bloc.dart';
-import 'presentation/blocs/expense_list/expense_list_bloc.dart';
-import 'presentation/pages/login_screen/login_screen.dart';
 
-/// Root widget of the application
-/// Configures bloc providers and theme
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -29,20 +28,23 @@ class App extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<ExpenseListBloc>(
-            create: (context) => sl<ExpenseListBloc>()
-              ..add(const ExpenseListSubscriptionRequested()),
-          ),
-          BlocProvider<CurrencyUpdateBloc>(
-            create: (context) => sl<CurrencyUpdateBloc>(),
+            create: (context) => sl<ExpenseListBloc>(),
           ),
           BlocProvider<AuthBloc>(
             create: (context) => sl<AuthBloc>(),
           ),
+          BlocProvider<CurrencyUpdateBloc>(
+            create: (context) => sl<CurrencyUpdateBloc>(),
+          ),
         ],
         child: MaterialApp(
-          home: const LoginScreen(),
-          theme: AppTheme.theme,
           debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode:
+              ThemeMode.dark, // Automatically switch based on system settings
+          title: 'Expense Tracker',
+          home: const LoginScreen(),
         ),
       ),
     );

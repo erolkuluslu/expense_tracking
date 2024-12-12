@@ -1,16 +1,18 @@
+// ignore_for_file: cascade_invocations, unnecessary_lambdas, strict_raw_type
+
+import 'package:expense_tracking/data/datasources/api/iservice_manager.dart';
+import 'package:expense_tracking/data/datasources/local/local_storage_source.dart';
+import 'package:expense_tracking/data/datasources/local/shared_preferences/shared_pref_source.dart';
+import 'package:expense_tracking/data/repositories/currency_repository.dart';
+import 'package:expense_tracking/data/repositories/expense_repository.dart';
+import 'package:expense_tracking/presentation/blocs/auth/auth_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/currency_update/currency_update_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_form/expense_form_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../data/datasources/dio_service_manager.dart';
-import '../../data/datasources/iservice_manager.dart';
-import '../../data/idata_storage.dart';
-import '../../data/repositories/currency_repository.dart';
-import '../../data/repositories/expense_repository.dart';
-import '../../data/shared_pref_storage.dart';
-import '../../presentation/blocs/auth/auth_bloc.dart';
-import '../../presentation/blocs/currency_update/currency_update_bloc.dart';
-import '../../presentation/blocs/expense_form/expense_form_bloc.dart';
-import '../../presentation/blocs/expense_list/expense_list_bloc.dart';
+import '../../data/datasources/api/dio_service_manager.dart';
 
 /// Global service locator instance
 final sl = GetIt.instance;
@@ -26,8 +28,8 @@ Future<void> initializeDependencies() async {
     () => DioServiceManager(),
   );
 
-  sl.registerLazySingleton<ExpenseStorage>(
-    () => SharedPrefStorage(preferences: sl()),
+  sl.registerLazySingleton<LocalStorageSource>(
+    () => SharedPreferencesSource(sl()),
   );
 
   // Repositories
@@ -44,7 +46,7 @@ Future<void> initializeDependencies() async {
 
   // BLoCs
   sl.registerFactory<AuthBloc>(
-    () => AuthBloc(),
+    AuthBloc.new,
   );
 
   sl.registerFactory<CurrencyUpdateBloc>(

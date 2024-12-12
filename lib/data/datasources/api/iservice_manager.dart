@@ -1,4 +1,4 @@
-import 'package:expense_tracking/data/datasources/base_response_model.dart';
+import 'package:expense_tracking/data/datasources/api/base_response_model.dart';
 
 /// Interface for making HTTP requests
 /// T is the type of data expected in the response

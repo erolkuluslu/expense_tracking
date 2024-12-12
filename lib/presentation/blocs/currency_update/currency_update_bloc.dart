@@ -9,7 +9,8 @@ part 'currency_update_state.dart';
 
 /// [CurrencyUpdateBloc] handles currency conversion and updates
 /// It manages fetching conversion rates and updating the currency preference
-class CurrencyUpdateBloc extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> {
+class CurrencyUpdateBloc
+    extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> {
   final CurrencyRepository _repository;
   String _currentBaseCurrency = 'USD';
 
@@ -25,7 +26,7 @@ class CurrencyUpdateBloc extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> 
 
     // Initialize with stored preference
     _currentBaseCurrency = repository.getCurrencyPreference();
-    
+
     // Fetch initial conversion rate and currency preference
     add(FetchConversionRateEvent(_currentBaseCurrency));
   }
@@ -41,8 +42,9 @@ class CurrencyUpdateBloc extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> 
     emit(CurrencyUpdateLoading(currency: event.currency));
 
     // Fetch conversion rates for both current and target currencies
-    final fromResponse = await _repository.getConversionRates(_currentBaseCurrency);
-    
+    final fromResponse =
+        await _repository.getConversionRates(_currentBaseCurrency);
+
     if (fromResponse.error != null) {
       emit(CurrencyUpdateError(
           errorMessage: 'Failed to fetch conversion rates',
@@ -52,14 +54,11 @@ class CurrencyUpdateBloc extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> 
 
     final rates = fromResponse.data['rates'] as Map<String, dynamic>;
     final conversionRate = _repository.calculateCrossRate(
-      rates,
-      _currentBaseCurrency,
-      event.currency
-    );
+        rates, _currentBaseCurrency, event.currency);
 
     // Update current base currency
     _currentBaseCurrency = event.currency;
-    
+
     // Save the new preference
     await _repository.saveCurrencyPreference(event.currency);
 
@@ -85,10 +84,7 @@ class CurrencyUpdateBloc extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> 
 
     final rates = response.data['rates'] as Map<String, dynamic>;
     final conversionRate = _repository.calculateCrossRate(
-      rates,
-      _currentBaseCurrency,
-      event.baseCurrency
-    );
+        rates, _currentBaseCurrency, event.baseCurrency);
 
     emit(CurrencyUpdated(
       currency: event.baseCurrency,

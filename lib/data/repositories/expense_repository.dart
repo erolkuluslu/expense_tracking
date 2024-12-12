@@ -1,12 +1,12 @@
-import 'package:expense_tracking/data/idata_storage.dart';
+import 'package:expense_tracking/data/datasources/local/local_storage_source.dart';
 
 import '../models/expense.dart';
 
 /// Repository responsible for managing expense-related operations
 class ExpenseRepository {
-  final ExpenseStorage _storage;
+  final LocalStorageSource _storage;
 
-  const ExpenseRepository({required ExpenseStorage storage})
+  const ExpenseRepository({required LocalStorageSource storage})
       : _storage = storage;
 
   /// Creates a new expense

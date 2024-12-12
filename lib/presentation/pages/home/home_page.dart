@@ -1,12 +1,13 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_int_literals
+
 import 'package:expense_tracking/core/extensions/extensions.dart';
+import 'package:expense_tracking/presentation/blocs/auth/auth_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/currency_update/currency_update_bloc.dart';
+import 'package:expense_tracking/presentation/pages/home/widgets/expense_filter_widget.dart';
+import 'package:expense_tracking/presentation/pages/home/widgets/expenses_widget.dart';
+import 'package:expense_tracking/presentation/pages/home/widgets/total_expenses_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../blocs/auth/auth_bloc.dart';
-import '../../blocs/currency_update/currency_update_bloc.dart';
-import 'widgets/expense_filter_widget.dart';
-import 'widgets/expenses_widget.dart';
-import 'widgets/total_expenses_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
