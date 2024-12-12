@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expense_tracking/core/di/service_locator.dart';
 import 'package:expense_tracking/app.dart';
-import 'package:expense_tracking/presentation/widgets/app_bloc_observer.dart';
+import 'package:expense_tracking/presentation/blocs/app_bloc_observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

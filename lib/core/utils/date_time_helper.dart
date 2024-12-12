@@ -1,26 +1,26 @@
 String convertDateTimeToString(DateTime dateTime) {
-  String year = dateTime.year.toString();
-  String month = dateTime.month.toString();
+  final year = dateTime.year.toString();
+  var month = dateTime.month.toString();
   if (month.length == 1) {
-    month = '0' + month;
+    month = '0$month';
   }
-  String day = dateTime.day.toString();
+  var day = dateTime.day.toString();
   if (day.length == 1) {
-    day = '0' + day;
+    day = '0$day';
   }
-  String yyyymmdd = '$year-$month-$day';
+  final yyyymmdd = '$year-$month-$day';
   return yyyymmdd;
 }
 
 //String getWeekDay(DateTime date) => date.weekday.toString();
 DateTime startOfWeekDate() {
-  DateTime today = DateTime.now();
+  final today = DateTime.now();
 
   // Calculate the difference in days between today and the most recent Monday.
-  int difference = today.weekday - 1;
+  final difference = today.weekday - 1;
 
   // Subtract the difference to get the start of the week (Monday).
-  DateTime startOfWeek = today.subtract(Duration(days: difference));
+  final startOfWeek = today.subtract(Duration(days: difference));
 
   return startOfWeek;
 }
@@ -28,20 +28,20 @@ DateTime startOfWeekDate() {
 String getDayName(DateTime date) {
   switch (date.weekday) {
     case 1:
-      return "Monday";
+      return 'Monday';
     case 2:
-      return "Tuesday";
+      return 'Tuesday';
     case 3:
-      return "Wednesday";
+      return 'Wednesday';
     case 4:
-      return "Thursday";
+      return 'Thursday';
     case 5:
-      return "Friday";
+      return 'Friday';
     case 6:
-      return "Saturday";
+      return 'Saturday';
     case 7:
-      return "Sunday";
+      return 'Sunday';
     default:
-      return "Monday";
+      return 'Monday';
   }
 }

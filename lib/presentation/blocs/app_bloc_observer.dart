@@ -1,17 +1,18 @@
+// ignore_for_file: strict_raw_type, prefer_single_quotes, avoid_print
+
 import 'package:bloc/bloc.dart';
 
+/// Observes all BLoC state changes for debugging and logging.
 class AppBlocObserver extends BlocObserver {
   @override
   void onCreate(BlocBase bloc) {
-    // TODO: implement onCreate
     super.onCreate(bloc);
-    print("${bloc.runtimeType} created");
+    print("[Bloc Created] ${bloc.runtimeType}");
   }
 
   @override
   void onChange(BlocBase bloc, Change change) {
-    // TODO: implement onChange
     super.onChange(bloc, change);
-    print('$bloc changed - $change');
+    print("[Bloc Changed] ${bloc.runtimeType} changed - $change");
   }
 }

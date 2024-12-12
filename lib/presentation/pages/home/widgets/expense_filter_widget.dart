@@ -1,8 +1,9 @@
+// Use domain category instead of data category
+import 'package:expense_tracking/domain/entities/category.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../data/models/category.dart';
-import '../../../blocs/expense_list/expense_list_bloc.dart';
 
 class ExpenseFilterWidget extends StatelessWidget {
   const ExpenseFilterWidget({super.key});
@@ -11,7 +12,7 @@ class ExpenseFilterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     const categories = Category.values;
 
-    final activeFiler = context.select(
+    final activeFilter = context.select(
       (ExpenseListBloc bloc) => bloc.state.filter,
     );
 
@@ -26,14 +27,14 @@ class ExpenseFilterWidget extends StatelessWidget {
 
           return ChoiceChip(
             label: Text(category.toName),
-            selected: activeFiler == category,
+            selected: activeFilter == category,
             onSelected: (_) => context
                 .read<ExpenseListBloc>()
                 .add(ExpenseListCategoryFilterChanged(category)),
           );
         },
         separatorBuilder: (context, index) => const SizedBox(width: 10),
-        itemCount: Category.values.length,
+        itemCount: categories.length,
       ),
     );
   }

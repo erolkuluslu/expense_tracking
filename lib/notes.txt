@@ -1,0 +1,9 @@
+flutter emulators --launch Pixel_4_XL_API_27
+
+
+flutter clean
+flutter pub get
+flutter run
+
+
+cd C:\Users\akulu\StudioProjects\expense_tracking

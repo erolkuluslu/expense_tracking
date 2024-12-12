@@ -1,4 +1,4 @@
-import 'package:expense_tracking/data/models/expense.dart';
+import 'package:expense_tracking/domain/entities/expense.dart';
 
 abstract class LocalStorageSource {
   Future<void> saveExpense(Expense expense);

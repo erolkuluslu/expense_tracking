@@ -1,15 +1,15 @@
 import 'package:expense_tracking/core/extensions/extensions.dart';
+import 'package:expense_tracking/domain/entities/category.dart';
+import 'package:expense_tracking/domain/entities/expense.dart';
+import 'package:expense_tracking/presentation/blocs/currency_update/currency_update_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../data/models/expense.dart';
-import '../../../../data/models/category.dart';
-import '../../../blocs/currency_update/currency_update_bloc.dart';
-import '../../../blocs/expense_list/expense_list_bloc.dart';
-
 class ExpenseTileWidget extends StatelessWidget {
-  const ExpenseTileWidget({super.key, required this.expense});
+  const ExpenseTileWidget({required this.expense, super.key});
   final Expense expense;
 
   String _formatAmount(double amount, CurrencyUpdateState currencyState) {
@@ -20,13 +20,10 @@ class ExpenseTileWidget extends StatelessWidget {
       ).format(amount);
     }
 
-    double convertedAmount = amount;
+    var convertedAmount = amount;
     if (expense.currency != currencyState.currency) {
-      if (expense.currency == currencyState.previousCurrency) {
-        convertedAmount = amount * currencyState.conversionRate;
-      } else {
-        convertedAmount = amount * currencyState.conversionRate;
-      }
+      // Conversion logic if needed
+      convertedAmount = amount * currencyState.conversionRate;
     }
 
     return NumberFormat.currency(
@@ -38,7 +35,7 @@ class ExpenseTileWidget extends StatelessWidget {
   String _getCurrencySymbol(String currencyCode) {
     switch (currencyCode.toUpperCase()) {
       case 'USD':
-        return '\$';
+        return r'$';
       case 'EUR':
         return '€';
       case 'TRY':
@@ -90,9 +87,10 @@ class ExpenseTileWidget extends StatelessWidget {
             child: Icon(Icons.delete, color: colorScheme.onError),
           ),
           onDismissed: (direction) {
-            context
-                .read<ExpenseListBloc>()
-                .add(ExpenseListExpenseDeleted(expense: expense));
+            // Use the updated named parameter in the event constructor
+            context.read<ExpenseListBloc>().add(
+                  ExpenseListExpenseDeleted(expense: expense),
+                );
           },
           child: ListTile(
             onTap: () => context.showAddExpenseSheet(expense: expense),

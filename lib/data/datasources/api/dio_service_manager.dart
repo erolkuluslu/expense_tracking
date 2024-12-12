@@ -1,4 +1,5 @@
 /// dio_service_manager.dart
+library;
 
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -6,10 +7,6 @@ import 'package:expense_tracking/data/datasources/api/base_response_model.dart';
 import 'package:expense_tracking/data/datasources/api/iservice_manager.dart';
 
 class DioServiceManager<T> extends IserviceManager<T> {
-  late final Dio _dio;
-  static const _defaultTimeout = Duration(seconds: 30);
-  static const _defaultRetries = 3;
-
   DioServiceManager() {
     _dio = Dio()
       ..options.connectTimeout = _defaultTimeout
@@ -19,7 +16,7 @@ class DioServiceManager<T> extends IserviceManager<T> {
         InterceptorsWrapper(
           onError: (error, handler) async {
             // Cast retries to an int
-            final int retries =
+            final retries =
                 (error.requestOptions.extra['retries'] as int?) ?? 0;
 
             // Make sure all conditions are clearly boolean expressions
@@ -36,31 +33,27 @@ class DioServiceManager<T> extends IserviceManager<T> {
         ),
       );
   }
+  late final Dio _dio;
+  static const _defaultTimeout = Duration(seconds: 30);
+  static const _defaultRetries = 3;
 
   BaseResponseModel<T> _handleDioException(DioException e) {
     String errorMessage;
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
         errorMessage = 'Connection timeout';
-        break;
       case DioExceptionType.sendTimeout:
         errorMessage = 'Send timeout';
-        break;
       case DioExceptionType.receiveTimeout:
         errorMessage = 'Receive timeout';
-        break;
       case DioExceptionType.badCertificate:
         errorMessage = 'Bad certificate';
-        break;
       case DioExceptionType.badResponse:
         errorMessage = 'Bad response: ${e.response?.statusCode}';
-        break;
       case DioExceptionType.cancel:
         errorMessage = 'Request cancelled';
-        break;
       case DioExceptionType.connectionError:
         errorMessage = 'Connection error';
-        break;
       case DioExceptionType.unknown:
       default:
         errorMessage = 'Unknown error';
@@ -101,7 +94,9 @@ class DioServiceManager<T> extends IserviceManager<T> {
 
   @override
   Future<BaseResponseModel<T>> post(
-      String url, Map<String, dynamic> body) async {
+    String url,
+    Map<String, dynamic> body,
+  ) async {
     try {
       final response = await _dio.post(
         url,
@@ -118,7 +113,9 @@ class DioServiceManager<T> extends IserviceManager<T> {
 
   @override
   Future<BaseResponseModel<T>> put(
-      String url, Map<String, dynamic> body) async {
+    String url,
+    Map<String, dynamic> body,
+  ) async {
     try {
       final response = await _dio.put(
         url,

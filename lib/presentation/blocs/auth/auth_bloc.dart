@@ -1,5 +1,7 @@
 /// Authentication Bloc that handles user authentication state and events
 /// This bloc manages the authentication flow including login validation and state management
+library;
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -37,13 +39,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         // Validate email format
         if (!emailRegex.hasMatch(email)) {
-          return emit(const AuthFailure("Invalid email format"));
-        } 
+          return emit(const AuthFailure('Invalid email format'));
+        }
         // Validate password length
         else if (password.length < 6) {
           return emit(
-              const AuthFailure("Password must be at least 6 characters long"));
-        } 
+            const AuthFailure('Password must be at least 6 characters long'),
+          );
+        }
         // Simulate authentication delay and emit success
         else {
           await Future.delayed(const Duration(milliseconds: 300));

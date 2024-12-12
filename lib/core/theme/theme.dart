@@ -166,7 +166,7 @@ class AppTheme {
 
       // ListTileTheme
       listTileTheme: ListTileThemeData(
-        tileColor: scheme.surfaceVariant?.withOpacity(0.2),
+        tileColor: scheme.surfaceVariant.withOpacity(0.2),
         iconColor: scheme.onSurface,
         textColor: scheme.onSurface,
       ),
@@ -234,14 +234,14 @@ class AppTheme {
       cardTheme: CardTheme(
         color: scheme.surfaceVariant,
         elevation: 2,
-        margin: const EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
       // Input Decoration Theme (TextFields, etc.)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.surfaceVariant?.withOpacity(0.1),
+        fillColor: scheme.surfaceVariant.withOpacity(0.1),
         hintStyle: TextStyle(color: scheme.onSurface.withOpacity(0.7)),
         labelStyle: TextStyle(color: scheme.onSurface),
         border: OutlineInputBorder(

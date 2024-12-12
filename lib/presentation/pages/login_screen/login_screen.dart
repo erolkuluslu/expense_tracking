@@ -1,18 +1,18 @@
 // ignore_for_file: always_use_package_imports
 
+import 'package:expense_tracking/domain/repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rive/rive.dart';
 
-import '../../../data/repositories/expense_repository.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../home/home_page.dart';
 import 'widgets/gradient_button.dart';
 import 'widgets/login_field.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final file = RiveFile.import(data);
 
       final artboard = file.mainArtboard;
-      var controller = StateMachineController.fromArtboard(
+      final controller = StateMachineController.fromArtboard(
         artboard,
         'State Machine 1', // Ensure this matches your state machine name in Rive
       );
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
           stateMachineController = controller;
         });
       } else {
-        debugPrint("StateMachineController not found.");
+        debugPrint('StateMachineController not found.');
       }
     } catch (e) {
       debugPrint('Error loading Rive file: $e');
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final expenseRepository = context.read<ExpenseRepository>();
+    context.read<IExpenseRepository>();
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -164,9 +164,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     GradientButton(
                       text: 'Login',
                       onPressed: () {
-                        context.read<AuthBloc>().add(AuthLoginRequested(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim()));
+                        context.read<AuthBloc>().add(
+                              AuthLoginRequested(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(),
+                              ),
+                            );
                       },
                     ),
                   ],

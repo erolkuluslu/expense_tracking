@@ -1,15 +1,7 @@
 /// base_response_model.dart
+library;
 
 final class BaseResponseModel<T> {
-  /// The response data of type T
-  final T? data;
-
-  /// Error message if any
-  final String? error;
-
-  /// HTTP status code of the response
-  final int? statusCode;
-
   /// Creates a BaseResponseModel instance
   ///
   /// [data] - The response data
@@ -20,11 +12,6 @@ final class BaseResponseModel<T> {
     this.error,
     this.statusCode,
   });
-
-  /// Whether the response was successful
-  bool get isSuccess =>
-      error == null &&
-      ((statusCode == null) || (statusCode! >= 200 && statusCode! < 300));
 
   /// Creates a success response
   factory BaseResponseModel.success(T? data, {int? statusCode}) {
@@ -41,6 +28,20 @@ final class BaseResponseModel<T> {
       statusCode: statusCode,
     );
   }
+
+  /// The response data of type T
+  final T? data;
+
+  /// Error message if any
+  final String? error;
+
+  /// HTTP status code of the response
+  final int? statusCode;
+
+  /// Whether the response was successful
+  bool get isSuccess =>
+      error == null &&
+      ((statusCode == null) || (statusCode! >= 200 && statusCode! < 300));
 
   /// Creates a copy of this response with some fields replaced
   BaseResponseModel<T> copyWith({

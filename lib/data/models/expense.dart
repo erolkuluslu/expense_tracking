@@ -1,114 +1,39 @@
-import 'package:equatable/equatable.dart';
-import 'category.dart';
+// data/models/expense_model.dart
+import 'package:expense_tracking/domain/entities/category.dart';
+import 'package:expense_tracking/domain/entities/expense.dart';
 
-class Expense extends Equatable {
-  final String id;
-  final String title;
-  final double amount;
-  final DateTime date;
-  final Category category;
-  final String currency;
+class ExpenseModel extends Expense {
+  ExpenseModel({
+    required super.id,
+    required super.title,
+    required super.amount,
+    required super.date,
+    required super.currency,
+    required super.category,
+  });
 
-  const Expense({
-    required this.id,
-    required this.title,
-    required this.amount,
-    required this.date,
-    required this.category,
-    this.currency = 'USD',
-  }) : assert(amount >= 0, 'Amount must be non-negative');
-
-  @override
-  List<Object?> get props => [
-        id,
-        title,
-        amount,
-        date,
-        category,
-        currency,
-      ];
-
-  factory Expense.fromJson(Map<String, dynamic> json) {
-    try {
-      final amount = json['amount'];
-      double parsedAmount;
-      if (amount is String) {
-        parsedAmount = double.tryParse(amount) ?? 0.0;
-      } else if (amount is num) {
-        parsedAmount = amount.toDouble();
-      } else {
-        parsedAmount = 0.0;
-      }
-
-      final date = json['date'];
-      DateTime parsedDate;
-      if (date is int) {
-        parsedDate = DateTime.fromMillisecondsSinceEpoch(date);
-      } else if (date is String) {
-        parsedDate = DateTime.tryParse(date) ?? DateTime.now();
-      } else {
-        parsedDate = DateTime.now();
-      }
-
-      final category = json['category'];
-      Category parsedCategory;
-      if (category is String) {
-        parsedCategory = Category.fromJson(category);
-      } else if (category is Map<String, dynamic> && category['name'] is String) {
-        parsedCategory = Category.fromJson(category['name'] as String);
-      } else {
-        parsedCategory = Category.other;
-      }
-
-      return Expense(
-        id: json['id']?.toString() ?? '',
-        title: json['title']?.toString() ?? '',
-        amount: parsedAmount,
-        date: parsedDate,
-        category: parsedCategory,
-        currency: json['currency']?.toString()?.toUpperCase() ?? 'USD',
-      );
-    } catch (e) {
-      return Expense(
-        id: '',
-        title: 'Invalid Expense',
-        amount: 0.0,
-        date: DateTime.now(),
-        category: Category.other,
-        currency: 'USD',
-      );
-    }
+  factory ExpenseModel.fromJson(Map<String, dynamic> json) {
+    return ExpenseModel(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      amount: (json['amount'] as num).toDouble(),
+      date: DateTime.parse(json['date'] as String),
+      currency: json['currency'] as String,
+      category: Category.values.firstWhere(
+        (c) => c.toString() == json['category'] as String,
+        orElse: () => Category.other,
+      ),
+    );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,
-      'amount': amount.toString(),
-      'date': date.millisecondsSinceEpoch,
-      'category': category.toJson(),
-      'currency': currency.toUpperCase(),
+      'amount': amount,
+      'date': date.toIso8601String(),
+      'currency': currency,
+      'category': category.toString(),
     };
   }
-
-  Expense copyWith({
-    String? id,
-    String? title,
-    double? amount,
-    DateTime? date,
-    Category? category,
-    String? currency,
-  }) {
-    return Expense(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      amount: amount ?? this.amount,
-      date: date ?? this.date,
-      category: category ?? this.category,
-      currency: currency?.toUpperCase() ?? this.currency,
-    );
-  }
-
-  @override
-  bool get stringify => true;
 }

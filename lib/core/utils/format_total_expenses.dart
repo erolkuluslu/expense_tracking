@@ -5,17 +5,15 @@ String formatTotalExpenses(double totalExpenses, String currency) {
   switch (currency) {
     case 'EUR':
       symbol = '€';
-      break;
     case 'TRY':
       symbol = '₺';
-      break;
     case 'USD':
     default:
-      symbol = '\$';
+      symbol = r'$';
       break;
   }
 
   final formatter = NumberFormat.currency(symbol: symbol, decimalDigits: 2);
   final formattedValue = formatter.format(totalExpenses.abs());
-  return totalExpenses < 0 ? "-$formattedValue" : formattedValue;
+  return totalExpenses < 0 ? '-$formattedValue' : formattedValue;
 }

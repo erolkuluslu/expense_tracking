@@ -1,18 +1,21 @@
+import 'package:expense_tracking/core/utils/format_total_expenses.dart';
+import 'package:expense_tracking/domain/entities/expense.dart';
+import 'package:expense_tracking/presentation/blocs/currency_update/currency_update_bloc.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/utils/format_total_expenses.dart';
-import '../../../blocs/currency_update/currency_update_bloc.dart';
-import '../../../blocs/expense_list/expense_list_bloc.dart';
-import '../../../../data/models/expense.dart';
 
 class TotalExpensesWidget extends StatelessWidget {
   const TotalExpensesWidget({super.key});
 
-  double _calculateTotalExpenses(List<Expense?> expenses, CurrencyUpdateState currencyState) {
-    double total = 0;
+  double _calculateTotalExpenses(
+    List<Expense?> expenses,
+    CurrencyUpdateState currencyState,
+  ) {
+    var total = 0.0;
     for (final expense in expenses) {
       if (expense == null) continue;
-      
+
       if (currencyState is CurrencyUpdated) {
         if (expense.currency == currencyState.currency) {
           total += expense.amount;
@@ -23,7 +26,8 @@ class TotalExpensesWidget extends StatelessWidget {
           total += expense.amount * currencyState.conversionRate;
         }
       } else {
-        total += expense.amount; // Fallback to original amount if no conversion available
+        total += expense
+            .amount; // Fallback to original amount if no conversion available
       }
     }
     return total;

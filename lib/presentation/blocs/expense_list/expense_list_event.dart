@@ -1,30 +1,30 @@
-part of 'expense_list_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:expense_tracking/domain/entities/category.dart';
+import 'package:expense_tracking/domain/entities/expense.dart';
 
-sealed class ExpenseListEvent extends Equatable {
+abstract class ExpenseListEvent extends Equatable {
   const ExpenseListEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-final class ExpenseListSubscriptionRequested extends ExpenseListEvent {
-  const ExpenseListSubscriptionRequested();
-}
+class ExpenseListSubscriptionRequested extends ExpenseListEvent {}
 
-final class ExpenseListExpenseDeleted extends ExpenseListEvent {
+class ExpenseListExpenseDeleted extends ExpenseListEvent {
   const ExpenseListExpenseDeleted({required this.expense});
 
+  /// Updated the constructor to accept a named parameter.
   final Expense expense;
 
   @override
-  List<Object> get props => [expense];
+  List<Object?> get props => [expense];
 }
 
 class ExpenseListCategoryFilterChanged extends ExpenseListEvent {
   const ExpenseListCategoryFilterChanged(this.filter);
-
   final Category filter;
 
   @override
-  List<Object> get props => [filter];
+  List<Object?> get props => [filter];
 }

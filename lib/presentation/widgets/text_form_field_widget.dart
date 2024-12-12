@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class TextFormFieldWidget extends StatelessWidget {
   const TextFormFieldWidget({
-    super.key,
     required this.label,
     required this.hint,
+    super.key,
     this.prefixText,
     this.onTap,
     this.onChanged,
@@ -37,7 +37,7 @@ class TextFormFieldWidget extends StatelessWidget {
           Text(
             label,
             style: textTheme.labelLarge?.copyWith(
-              color: colorScheme.onBackground.withOpacity(0.4),
+              color: colorScheme.onSurface.withOpacity(0.4),
               height: 1,
               fontWeight: FontWeight.w400,
             ),

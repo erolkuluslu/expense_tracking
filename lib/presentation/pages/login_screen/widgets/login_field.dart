@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/pallete.dart';
+import 'package:expense_tracking/core/theme/pallete.dart';
 
 class LoginField extends StatelessWidget {
-  final String hintText;
-  final TextEditingController controller;
-  final VoidCallback onTap;
-  final bool? isEmail;
-
   const LoginField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.controller,
     required this.onTap,
     this.isEmail,
-  }) : super(key: key);
+  });
+  final String hintText;
+  final TextEditingController controller;
+  final VoidCallback onTap;
+  final bool? isEmail;
 
   @override
   Widget build(BuildContext context) {

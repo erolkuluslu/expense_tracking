@@ -18,14 +18,14 @@ final class AuthLoading extends AuthState {}
 /// State representing successful authentication
 /// Contains the authenticated user's email and password
 final class AuthSuccess extends AuthState {
+  const AuthSuccess({required this.email, required this.password});
   final String email;
   final String password;
-  const AuthSuccess({required this.email, required this.password});
 }
 
 /// State representing failed authentication
 /// Contains an error message describing the failure reason
 final class AuthFailure extends AuthState {
-  final String message;
   const AuthFailure(this.message);
+  final String message;
 }

@@ -12,8 +12,7 @@ sealed class AuthEvent extends Equatable {
 /// Event triggered when a user requests to log in
 /// Contains the user's email and password credentials
 final class AuthLoginRequested extends AuthEvent {
+  const AuthLoginRequested({required this.email, required this.password});
   final String email;
   final String password;
-
-  const AuthLoginRequested({required this.email, required this.password});
 }

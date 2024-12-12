@@ -1,26 +1,28 @@
-// ignore_for_file: always_use_package_imports
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:expense_tracking/domain/entities/category.dart';
+import 'package:expense_tracking/domain/entities/expense.dart';
+import 'package:expense_tracking/domain/usecases/delete_expense_use_case.dart';
+import 'package:expense_tracking/domain/usecases/get_all_expenses_use_case.dart';
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_event.dart';
 
-import '../../../data/models/category.dart';
-import '../../../data/models/expense.dart';
-import '../../../data/repositories/expense_repository.dart';
-
-part 'expense_list_event.dart';
 part 'expense_list_state.dart';
 
+/// Bloc that manages a list of expenses.
+/// It uses domain use cases to load and delete expenses.
 class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
   ExpenseListBloc({
-    required ExpenseRepository repository,
-  })  : _repository = repository,
+    required GetAllExpensesUseCase getAllExpensesUseCase,
+    required DeleteExpenseUseCase deleteExpenseUseCase,
+  })  : _getAllExpensesUseCase = getAllExpensesUseCase,
+        _deleteExpenseUseCase = deleteExpenseUseCase,
         super(const ExpenseListState()) {
     on<ExpenseListSubscriptionRequested>(_onSubscriptionRequested);
     on<ExpenseListExpenseDeleted>(_onExpenseDeleted);
     on<ExpenseListCategoryFilterChanged>(_onExpenseCategoryFilterChanged);
   }
-
-  final ExpenseRepository _repository;
+  final GetAllExpensesUseCase _getAllExpensesUseCase;
+  final DeleteExpenseUseCase _deleteExpenseUseCase;
 
   Future<void> _onSubscriptionRequested(
     ExpenseListSubscriptionRequested event,
@@ -28,16 +30,15 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
   ) async {
     emit(state.copyWith(status: () => ExpenseListStatus.loading));
 
-    final stream = _repository.getAllExpenses();
+    final stream = _getAllExpensesUseCase.execute();
 
     await emit.forEach<List<Expense?>>(
       stream,
       onData: (expenses) => state.copyWith(
         status: () => ExpenseListStatus.success,
         expenses: () => expenses,
-        totalExpenses: () => expenses
-            .map((currentExpense) => currentExpense?.amount)
-            .fold(0.0, (a, b) => a + b!),
+        totalExpenses: () =>
+            expenses.map((e) => e?.amount ?? 0.0).fold(0, (a, b) => a + b),
       ),
       onError: (_, __) => state.copyWith(
         status: () => ExpenseListStatus.failure,
@@ -49,7 +50,7 @@ class ExpenseListBloc extends Bloc<ExpenseListEvent, ExpenseListState> {
     ExpenseListExpenseDeleted event,
     Emitter<ExpenseListState> emit,
   ) async {
-    await _repository.deleteExpense(event.expense.id);
+    await _deleteExpenseUseCase.execute(event.expense.id);
   }
 
   Future<void> _onExpenseCategoryFilterChanged(

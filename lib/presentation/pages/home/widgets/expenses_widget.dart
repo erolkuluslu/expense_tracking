@@ -1,8 +1,8 @@
+import 'package:expense_tracking/presentation/blocs/expense_list/expense_list_bloc.dart';
+import 'package:expense_tracking/presentation/pages/home/widgets/expense_tile_widget.dart';
+import 'package:expense_tracking/presentation/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/expense_list/expense_list_bloc.dart';
-import '../../../widgets/loading_widget.dart';
-import 'expense_tile_widget.dart';
 
 class ExpensesWidget extends StatelessWidget {
   const ExpensesWidget({super.key});

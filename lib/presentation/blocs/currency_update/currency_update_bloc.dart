@@ -1,95 +1,109 @@
-/// Bloc for managing currency updates and conversion rates
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../../data/repositories/currency_repository.dart';
+import 'package:expense_tracking/domain/usecases/calculate_cross_rate_use_case.dart';
+import 'package:expense_tracking/domain/usecases/get_conversion_rates_use_case.dart';
+import 'package:expense_tracking/domain/usecases/save_currency_preference_use_case.dart';
 
 part 'currency_update_event.dart';
 part 'currency_update_state.dart';
 
-/// [CurrencyUpdateBloc] handles currency conversion and updates
-/// It manages fetching conversion rates and updating the currency preference
+/// Bloc for managing currency updates and conversion rates.
 class CurrencyUpdateBloc
     extends Bloc<CurrencyUpdateEvent, CurrencyUpdateState> {
-  final CurrencyRepository _repository;
-  String _currentBaseCurrency = 'USD';
-
-  /// Creates a new instance of [CurrencyUpdateBloc]
-  /// [repository] is used for currency operations and persistence
   CurrencyUpdateBloc({
-    required CurrencyRepository repository,
-  })  : _repository = repository,
-        super(CurrencyUpdateInitial(
-            currency: repository.getCurrencyPreference())) {
+    required GetConversionRatesUseCase getConversionRatesUseCase,
+    required SaveCurrencyPreferenceUseCase saveCurrencyPreferenceUseCase,
+    required CalculateCrossRateUseCase calculateCrossRateUseCase,
+    required String initialCurrencyPreference,
+  })  : _getConversionRatesUseCase = getConversionRatesUseCase,
+        _saveCurrencyPreferenceUseCase = saveCurrencyPreferenceUseCase,
+        _calculateCrossRateUseCase = calculateCrossRateUseCase,
+        super(CurrencyUpdateInitial(currency: initialCurrencyPreference)) {
     on<ChangeCurrencyEvent>(_onChangeCurrency);
     on<FetchConversionRateEvent>(_onFetchConversionRate);
 
-    // Initialize with stored preference
-    _currentBaseCurrency = repository.getCurrencyPreference();
-
-    // Fetch initial conversion rate and currency preference
+    _currentBaseCurrency = initialCurrencyPreference;
     add(FetchConversionRateEvent(_currentBaseCurrency));
   }
+  final GetConversionRatesUseCase _getConversionRatesUseCase;
+  final SaveCurrencyPreferenceUseCase _saveCurrencyPreferenceUseCase;
+  final CalculateCrossRateUseCase _calculateCrossRateUseCase;
+  String _currentBaseCurrency = 'USD';
 
-  /// Handles currency change events
-  /// Fetches new conversion rates when currency changes
-  void _onChangeCurrency(
-      ChangeCurrencyEvent event, Emitter<CurrencyUpdateState> emit) async {
+  Future<void> _onChangeCurrency(
+    ChangeCurrencyEvent event,
+    Emitter<CurrencyUpdateState> emit,
+  ) async {
     if (state.currency == event.currency) {
+      // No change needed if same currency selected.
       return;
     }
 
     emit(CurrencyUpdateLoading(currency: event.currency));
 
-    // Fetch conversion rates for both current and target currencies
     final fromResponse =
-        await _repository.getConversionRates(_currentBaseCurrency);
+        await _getConversionRatesUseCase.execute(_currentBaseCurrency);
 
-    if (fromResponse.error != null) {
-      emit(CurrencyUpdateError(
-          errorMessage: 'Failed to fetch conversion rates',
-          currency: event.currency));
+    if (fromResponse['error'] != null) {
+      emit(
+        CurrencyUpdateError(
+          errorMessage: fromResponse['error'] as String,
+          currency: event.currency,
+        ),
+      );
       return;
     }
 
-    final rates = fromResponse.data['rates'] as Map<String, dynamic>;
-    final conversionRate = _repository.calculateCrossRate(
-        rates, _currentBaseCurrency, event.currency);
+    final rates = fromResponse['rates'] as Map<String, dynamic>;
+    final conversionRate = _calculateCrossRateUseCase.execute(
+      rates,
+      _currentBaseCurrency,
+      event.currency,
+    );
 
-    // Update current base currency
     _currentBaseCurrency = event.currency;
 
-    // Save the new preference
-    await _repository.saveCurrencyPreference(event.currency);
+    await _saveCurrencyPreferenceUseCase.execute(event.currency);
 
-    emit(CurrencyUpdated(
-      currency: event.currency,
-      conversionRate: conversionRate,
-      previousCurrency: state.currency,
-    ));
+    emit(
+      CurrencyUpdated(
+        currency: event.currency,
+        conversionRate: conversionRate,
+        previousCurrency: state.currency,
+      ),
+    );
   }
 
-  /// Handles conversion rate fetch events
-  /// Used for initial loading and refreshing rates
-  void _onFetchConversionRate(
-      FetchConversionRateEvent event, Emitter<CurrencyUpdateState> emit) async {
-    final response = await _repository.getConversionRates(event.baseCurrency);
+  Future<void> _onFetchConversionRate(
+    FetchConversionRateEvent event,
+    Emitter<CurrencyUpdateState> emit,
+  ) async {
+    final response =
+        await _getConversionRatesUseCase.execute(event.baseCurrency);
 
-    if (response.error != null) {
-      emit(CurrencyUpdateError(
-          errorMessage: 'Failed to fetch conversion rates',
-          currency: event.baseCurrency));
+    if (response['error'] != null) {
+      emit(
+        CurrencyUpdateError(
+          errorMessage: response['error'] as String,
+          currency: event.baseCurrency,
+        ),
+      );
       return;
     }
 
-    final rates = response.data['rates'] as Map<String, dynamic>;
-    final conversionRate = _repository.calculateCrossRate(
-        rates, _currentBaseCurrency, event.baseCurrency);
+    final rates = response['rates'] as Map<String, dynamic>;
+    final conversionRate = _calculateCrossRateUseCase.execute(
+      rates,
+      _currentBaseCurrency,
+      event.baseCurrency,
+    );
 
-    emit(CurrencyUpdated(
-      currency: event.baseCurrency,
-      conversionRate: conversionRate,
-      previousCurrency: state.currency,
-    ));
+    emit(
+      CurrencyUpdated(
+        currency: event.baseCurrency,
+        conversionRate: conversionRate,
+        previousCurrency: state.currency,
+      ),
+    );
   }
 }
