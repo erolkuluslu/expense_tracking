@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_int_literals
 
+import 'package:expense_tracking/core/constants/app_constants.dart';
+import 'package:expense_tracking/core/constants/ui_constants.dart';
 import 'package:expense_tracking/core/extensions/extensions.dart';
 import 'package:expense_tracking/presentation/blocs/auth/auth_bloc.dart';
 import 'package:expense_tracking/presentation/blocs/currency_update/currency_update_bloc.dart';
@@ -9,28 +11,8 @@ import 'package:expense_tracking/presentation/pages/home/widgets/total_expenses_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late String _selectedCurrency;
-  final List<String> _currencies = ['USD', 'EUR', 'TRY'];
-
-  // Add customizable color and effect properties
-  double buttonElevation = 4.0;
-  Color splashColor = Colors.white.withOpacity(0.5);
-  Color shadowColor = Colors.black12;
-
-  @override
-  void initState() {
-    super.initState();
-    // Load the saved currency preference when the HomePage is initialized
-    _selectedCurrency = context.read<CurrencyUpdateBloc>().state.currency;
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,33 +22,44 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hello, ${authState.email}'),
+        title: Text(
+          'Hello, ${authState.email}', 
+          style: UIConstants.appBarTitleStyle
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: DropdownButton<String>(
-              value: _selectedCurrency,
-              icon: const Icon(Icons.arrow_downward),
-              elevation: 16,
-              style: const TextStyle(color: Colors.white),
-              underline: Container(
-                height: 2,
-                color: Colors.white,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedCurrency = newValue!;
-                  context
-                      .read<CurrencyUpdateBloc>()
-                      .add(ChangeCurrencyEvent(_selectedCurrency));
-                });
-              },
-              items: _currencies.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
+            child: BlocBuilder<CurrencyUpdateBloc, CurrencyUpdateState>(
+              builder: (context, state) {
+                // Use the state's currency
+                final selectedCurrency = state.currency;
+
+                return DropdownButton<String>(
+                  value: selectedCurrency,
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: AppConstants.dropdownElevation,
+                  style: UIConstants.dropdownTextStyle,
+                  underline: Container(
+                    height: 2,
+                    color: Colors.white,
+                  ),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      // Dispatch event to update currency through BLoC
+                      context
+                          .read<CurrencyUpdateBloc>()
+                          .add(ChangeCurrencyEvent(newValue));
+                    }
+                  },
+                  items: AppConstants.currencies
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 );
-              }).toList(),
+              },
             ),
           ),
         ],
@@ -95,14 +88,13 @@ class _HomePageState extends State<HomePage> {
                   context.showAddExpenseSheet();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme
-                      .primary, // Using colorScheme's primary color for the button
-                  elevation: buttonElevation, // Elevation effect
-                  shadowColor: shadowColor, // Shadow color
+                  backgroundColor: colorScheme.primary,
+                  elevation: AppConstants.buttonElevation,
+                  shadowColor: UIConstants.shadowColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  splashFactory: InkRipple.splashFactory, // Ripple effect
+                  splashFactory: InkRipple.splashFactory,
                   padding: const EdgeInsets.symmetric(
                     vertical: 15.0,
                     horizontal: 30.0,

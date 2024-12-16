@@ -11,6 +11,9 @@ import '../home/home_page.dart';
 import 'widgets/gradient_button.dart';
 import 'widgets/login_field.dart';
 
+/// [LoginScreen] is a stateful widget responsible for rendering the login interface.
+/// It creates a state object that manages the login screen's interactive elements,
+/// including Rive animation and user input fields.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -18,16 +21,22 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+/// [_LoginScreenState] manages the dynamic behavior of the login screen.
+/// It handles:
+/// - Loading and controlling a Rive animation (bunny character)
+/// - Managing text input controllers for email and password
+/// - Tracking focus and password input states
+/// - Interacting with the AuthBloc for authentication processes
 class _LoginScreenState extends State<LoginScreen> {
   late String animationURL;
   Artboard? _bunnyArtboard;
+  StateMachineController? stateMachineController;
   SMITrigger? success;
   SMITrigger? fail;
   SMIBool? isPassword;
   SMIBool? isFocus;
   SMINumber? number;
 
-  StateMachineController? stateMachineController;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -64,9 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loadRiveFile() async {
     try {
-      final data = await rootBundle.load(animationURL);
-      final file = RiveFile.import(data);
-
+      final bytes = await rootBundle.load(animationURL);
+      final file = RiveFile.import(bytes);
       final artboard = file.mainArtboard;
       final controller = StateMachineController.fromArtboard(
         artboard,
@@ -81,16 +89,21 @@ class _LoginScreenState extends State<LoginScreen> {
         isPassword = controller.findInput<bool>('IsPassword') as SMIBool?;
         isFocus = controller.findInput<bool>('isFocus') as SMIBool?;
         number = controller.findInput<double>('eye_track') as SMINumber?;
-        setState(() {
-          _bunnyArtboard = artboard;
-          stateMachineController = controller;
-        });
+        
+        _updateBunnyState(artboard, controller);
       } else {
         debugPrint('StateMachineController not found.');
       }
     } catch (e) {
       debugPrint('Error loading Rive file: $e');
     }
+  }
+
+  void _updateBunnyState(Artboard artboard, StateMachineController controller) {
+    setState(() {
+      _bunnyArtboard = artboard;
+      stateMachineController = controller;
+    });
   }
 
   @override

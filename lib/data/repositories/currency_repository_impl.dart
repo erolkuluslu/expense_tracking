@@ -1,4 +1,4 @@
-import 'package:expense_tracking/data/datasources/api/iservice_manager.dart';
+import 'package:expense_tracking/data/datasources/services/iservice_manager.dart';
 import 'package:expense_tracking/data/datasources/local/local_storage_source.dart';
 import 'package:expense_tracking/domain/repositories/currency_repository.dart';
 

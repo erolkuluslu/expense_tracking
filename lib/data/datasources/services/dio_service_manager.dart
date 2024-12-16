@@ -3,8 +3,8 @@ library;
 
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:expense_tracking/data/datasources/api/base_response_model.dart';
-import 'package:expense_tracking/data/datasources/api/iservice_manager.dart';
+import 'package:expense_tracking/data/datasources/services/base_response_model.dart';
+import 'package:expense_tracking/data/datasources/services/iservice_manager.dart';
 
 class DioServiceManager<T> extends IserviceManager<T> {
   DioServiceManager() {

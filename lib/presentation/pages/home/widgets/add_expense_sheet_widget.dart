@@ -43,15 +43,33 @@ class AddButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<ExpenseFormBloc>().state;
     final isLoading = state.status == ExpenseFormStatus.loading;
+    final hasError = state.status == ExpenseFormStatus.failure;
 
-    return FilledButton(
-      onPressed: isLoading || !state.isFormValid
-          ? null
-          : () {
-              context.read<ExpenseFormBloc>().add(ExpenseSubmitted());
-              Navigator.pop(context);
-            },
-      child: isLoading ? const LoadingWidget() : const Text('Add Expense'),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (hasError && state.errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Text(
+              state.errorMessage!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        FilledButton(
+          onPressed: isLoading || !state.isFormValid
+              ? null
+              : () {
+                  context.read<ExpenseFormBloc>().add(ExpenseSubmitted());
+                  Navigator.pop(context);
+                },
+          child: isLoading ? const LoadingWidget() : const Text('Add Expense'),
+        ),
+      ],
     );
   }
 }
